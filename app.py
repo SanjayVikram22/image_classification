@@ -28,7 +28,7 @@ except:
     gdown.download(id=url, output=destination)
 
 # Load your model here (make sure to provide the correct path)
-model = load_model(',/my_model.keras')
+model = load_model('./my_model.keras')
 
 @app.route('/')
 def upload_form():
