@@ -1,6 +1,5 @@
 flask
 gdown
-keras
+tensorflow
 gunicorn
 requests
-tensorflow
