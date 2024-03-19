@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Upload Multiple Images</title>
+  </head>
+  <body>
+    <center>
+      <h1>Upload Images</h1>
+      <form method="post" enctype="multipart/form-data">
+        <input type="file" name="image" multiple>
+        <input type="text" name="user_input" placeholder="Enter your input here">
+        <input type="submit">
+      </form>
+
+      {% if results %}
+        <h2>Results</h2>
+        {% for result in results %}
+          <div>
+            <h3>{{ result[1] }} (Confidence: {{ result[2] }})</h3>
+            <img src="{{ url_for('static', filename='./images_up/' ~ result[0]) }}" alt="Uploaded Image" style="max-width: 200px; max-height: 200px;">
+          </div>
+        {% endfor %}
+      {% endif %}
+    </center>
+  </body>
+</html>
