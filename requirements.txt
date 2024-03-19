@@ -1,5 +1,5 @@
-flask,
-gdown,
-keras,
-gunicorn,
+flask
+gdown
+keras
+gunicorn
 requests
