@@ -3,5 +3,6 @@ gdown
 tensorflow == 2.15.0
 keras == 2.15.0
 tf_keras == 2.15.1
+Werkzeug == 3.0.1
 gunicorn
 requests
