@@ -1,13 +1,15 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 import os
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from tensorflow.keras.applications.vgg16 import preprocess_input, decode_predictions
-from tensorflow.keras.models import load_model
+from keras.preprocessing.image import load_img, img_to_array
+from keras.applications.vgg16 import preprocess_input, decode_predictions
+from keras.models import load_model
 import gdown
+#from flask_ngrok import run_with_ngrok
 
 # Initialize Flask app
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__,template_folder='templates')
+#run_with_ngrok(app)  # This will start ngrok when the app is run
 
 # Configure uploads directory
 UPLOAD_FOLDER = 'images_up'
@@ -16,17 +18,17 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Check if the model file exists and download it if not
-model_file = "./my_model.keras"
-if not os.path.isfile(model_file):
+try:
+    with open("./my_model.keras",'r'):
+        print("File exists")
+except:
     print("Model needs to be downloaded")
-    url = "https://drive.google.com/uc?id=1k-vW5jqL9UdNEe6mvltPm3B6IaQuPUMK"
-    gdown.download(url, model_file, quiet=False)
-else:
-    print("File exists")
+    url = "1k-vW5jqL9UdNEe6mvltPm3B6IaQuPUMK"
+    destination = "./my_model.keras"
+    gdown.download(id=url, output=destination)
 
 # Load your model here (make sure to provide the correct path)
-model = load_model(model_file)
+model = load_model('./my_model.keras')
 
 @app.route('/')
 def upload_form():
@@ -45,19 +47,20 @@ def upload_images():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             image.save(filepath)
 
-            # Process and predict each image
+            # Process and predict each image here
             processed_image = preprocess_image(filepath)
             prediction = model.predict(processed_image)
-            decoded_prediction = decode_predictions(prediction, top=1)[0][0]  # Get top prediction
+            decoded_prediction = decode_predictions(prediction)[0][0]  # Get top prediction
             label, confidence = decoded_prediction[1], decoded_prediction[2]
 
-            if user_input.lower() in label.lower():
-                results.append((filename, label, confidence))
+            if user_input == label:
+              results.append((filename, label,confidence))
 
         # Optionally clear the folder after processing
-        # clear_folder_content(app.config['UPLOAD_FOLDER'])
+        #clear_folder_content(app.config['UPLOAD_FOLDER'])
 
         # Pass the results to the template
+        print(results)
         return render_template('index.html', results=results)
 
 def preprocess_image(image_path):
